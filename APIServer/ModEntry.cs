@@ -17,10 +17,16 @@ namespace APIServer
 
 		public override void Entry(IModHelper helper)
 		{
-            ConfigModel config = helper.Data.ReadJsonFile<ConfigModel>("config.json") ?? new ConfigModel();
-			server = new APIServer();
-			server.Listen(config.Host, config.Port);
-			this.Monitor.Log($"APIServer started in ${config.Host}:${config.Port}");
+            try
+            {
+                ConfigModel config = helper.Data.ReadJsonFile<ConfigModel>("config.json") ?? new ConfigModel();
+                server = new APIServer();
+                server.Listen(config.Host, config.Port);
+                this.Monitor.Log($"APIServer started in ${config.Host}:${config.Port}");
+            } catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
         }
 
         private void OnButtonPressed(object sender, ButtonPressedEventArgs args)

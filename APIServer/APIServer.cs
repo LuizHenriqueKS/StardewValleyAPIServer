@@ -39,6 +39,7 @@ namespace APIServer
             this.host = host;
             this.port = port;
             this.socketServer = new TcpListener(this.IPAddress, port);
+            this.socketServer.Start();
             clientAccepter.Start();
         }
 
