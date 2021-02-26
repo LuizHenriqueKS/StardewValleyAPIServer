@@ -1,5 +1,6 @@
 ﻿using APIServer.core;
 using APIServer.handler.command;
+using APIServer.handler.events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,9 +17,10 @@ namespace APIServer
 
         private int port;
         private string host;
+        private bool listening;
         private TcpListener socketServer;
         private readonly ClientAccepter clientAccepter;
-        private readonly Dictionary<int, APIClient> clientDict;
+        private readonly Dictionary<int, APIClient> clientMap;
         private readonly Dictionary<Object, List<Request>> requestListDict;
 
         public readonly CommandManager CommandManager;
@@ -26,7 +28,7 @@ namespace APIServer
 
         public APIServer()
         {
-            clientDict = new Dictionary<int, APIClient>();
+            clientMap = new Dictionary<int, APIClient>();
             clientAccepter = new ClientAccepter(this);
             requestListDict = new Dictionary<Object, List<Request>>();
             CommandManager = new CommandManager(this);
@@ -41,11 +43,17 @@ namespace APIServer
             this.socketServer = new TcpListener(this.IPAddress, port);
             this.socketServer.Start();
             clientAccepter.Start();
+            listening = true;
         }
 
         public void LoadDefaultHandlers()
         {
             this.CommandManager.AddHandler(new PingCommandHandler());
+            this.CommandManager.AddHandler(new RunJSCommandHandler());
+
+            this.CommandManager.AddHandler(new ListenButtonPressedEventCommandHandler());
+
+            this.EventManager.AddHandler(new ButtonPressedEventHandler());
         }
 
         public void FireEvent(APIEvent evt)
@@ -62,12 +70,28 @@ namespace APIServer
 
         public void AddClient(APIClient client)
         { 
-            this.clientDict.Add(client.Id, client);
+            this.clientMap.Add(client.Id, client);
         }
 
         public void RemoveClient(APIClient client)
         {
-            this.clientDict.Remove(client.Id);
+            this.clientMap.Remove(client.Id);
+            this.RemoveReferences(client);
+        }
+
+        public void RemoveReferences(APIClient client)
+        {
+            foreach(List<Request> list in requestListDict.Values)
+            {
+                for (int i = list.Count - 1; i >= 0; i--)
+                {
+                    Request req = list[i];
+                    if (req.Client.Id == client.Id)
+                    {
+                        list.RemoveAt(i);
+                    }
+                }
+            }
         }
 
         public void AddRequest(Object key, Request request)
@@ -76,7 +100,6 @@ namespace APIServer
             {
                 List<Request> list = requestListDict[key];
                 list.Add(request);
-                requestListDict.Add(key, list);
             } else
             {
                 List<Request> list = new List<Request>();
@@ -104,12 +127,17 @@ namespace APIServer
 
         public bool Listening
         {
-            get => socketServer != null;
+            get => listening;
         }
 
         public TcpListener SocketServer
         {
             get => socketServer;
+        }
+
+        public String Host
+        {
+            get => this.host;
         }
 
         public int Port

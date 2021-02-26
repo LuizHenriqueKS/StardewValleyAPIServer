@@ -11,6 +11,6 @@ namespace APIServer.model
     {
         public int Id;
         public ResponseType Type;
-        public dynamic Result;
+        public object Result;
     }
 }

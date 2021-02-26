@@ -71,8 +71,10 @@
   <ItemGroup>
     <Compile Include="core\APIClient.cs" />
     <Compile Include="core\ClientIO.cs" />
-    <Compile Include="core\ClientProcessor.cs" />
+    <Compile Include="core\ClientReader.cs" />
     <Compile Include="core\Command.cs" />
+    <Compile Include="core\DefaultEventHandler.cs" />
+    <Compile Include="core\EventCommandHandler.cs" />
     <Compile Include="core\EventManager .cs" />
     <Compile Include="core\IEventHandler.cs" />
     <Compile Include="core\ICommandHandler.cs" />
@@ -80,19 +82,31 @@
     <Compile Include="core\CommandManager.cs" />
     <Compile Include="core\ClientAccepter.cs" />
     <Compile Include="core\EventHandlerHelper.cs" />
+    <Compile Include="core\JSEngine.cs" />
+    <Compile Include="core\MonitorLog.cs" />
+    <Compile Include="core\Log.cs" />
     <Compile Include="core\Request.cs" />
     <Compile Include="enums\ResponseType.cs" />
     <Compile Include="events\APIEvent.cs" />
     <Compile Include="events\ButtonPressedEvent.cs" />
     <Compile Include="exception\AlreadyListeningException.cs" />
     <Compile Include="APIServer.cs" />
+    <Compile Include="exception\SocketClosedException.cs" />
+    <Compile Include="handler\command\ListenButtonPressedEventCommandHandler.cs" />
+    <Compile Include="handler\command\RunJSCommandHandler.cs" />
     <Compile Include="handler\command\PingCommandHandler.cs" />
     <Compile Include="handler\events\ButtonPressedEventHandler.cs" />
+    <Compile Include="model\CommandAccepted.cs" />
     <Compile Include="model\RequestModel.cs" />
     <Compile Include="model\ConfigModel.cs" />
     <Compile Include="model\ResponseModel.cs" />
     <Compile Include="ModEntry.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="util\GameEvents.cs" />
+    <Compile Include="util\GameJS.cs" />
+    <Compile Include="util\HandlerUtils.cs" />
+    <Compile Include="util\JSON.cs" />
+    <Compile Include="util\JSONContractResolve.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

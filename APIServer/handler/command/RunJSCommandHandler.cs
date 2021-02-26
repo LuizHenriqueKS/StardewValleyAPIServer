@@ -1,5 +1,6 @@
 ﻿using APIServer.core;
 using APIServer.util;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace APIServer.handler.command
 {
-    public class PingCommandHandler : ICommandHandler
+    public class RunJSCommandHandler : ICommandHandler
     {
         public bool CanHandle(CommandHandlerHelper helper)
         {
@@ -17,12 +18,20 @@ namespace APIServer.handler.command
 
         public string GetName()
         {
-            return "Ping";
+            return "RunJS";
         }
 
         public void Handle(CommandHandlerHelper helper)
         {
-            helper.Reply(enums.ResponseType.Response, "Pong");
+            try
+            {
+                string script = helper.Command.Args["script"].ToString();
+                object response = helper.Client.JSEngine.Evaluate(script);
+                helper.Reply(enums.ResponseType.Response, response);
+            } catch (Exception e)
+            {
+                helper.Reply(enums.ResponseType.Error, e);
+            }
         }
     }
 }

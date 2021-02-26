@@ -10,7 +10,7 @@ namespace APIServer
     public class ButtonPressedEvent : APIEvent
     {
         public object Sender;
-        public dynamic Args;
+        public object Args;
 
         public ButtonPressedEvent(object sender, ButtonPressedEventArgs args)
         {

@@ -15,7 +15,8 @@ namespace APIServer.core
         public readonly int Id;
         public readonly Socket Socket;
         public readonly ClientIO io;
-        public ClientProcessor Processor;
+        public ClientReader Processor;
+        public JSEngine JSEngine;
 
         private bool connected;
 
@@ -24,26 +25,41 @@ namespace APIServer.core
             this.Server = server;
             this.Socket = socket;
             this.Id = id;
-            this.io = new ClientIO(socket);
+            this.io = new ClientIO(this, socket);
+            this.connected = true;
+            this.JSEngine = new JSEngine(this);
+            Log.Info($"New client: {Name}");
         }
 
         public Request NextRequest()
         {
             RequestModel model = io.ReadRequest();
+            if (model == null)
+            {
+                return null;
+            }
             Request request = new Request(this, model);
             return request;
         }
 
         public void Close()
         {
-            connected = false;
-
-            Server.RemoveClient(this);
+            if (connected)
+            {
+                connected = false;
+                Server.RemoveClient(this);
+                Log.Info($"Closed client: {Name}");
+            }
         }
 
         public bool Connected
         {
             get => connected;
+        }
+
+        public string Name
+        {
+            get => $"Client#{Id}";
         }
 
     }

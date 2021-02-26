@@ -1,4 +1,6 @@
-﻿using APIServer.model;
+﻿using APIServer.exception;
+using APIServer.model;
+using APIServer.util;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -11,44 +13,66 @@ namespace APIServer.core
 {
     public class ClientIO
     {
+        private APIClient client;
         private Socket socket;
 
-        public ClientIO(Socket socket)
+        public ClientIO(APIClient client, Socket socket)
         {
+            this.client = client;
             this.socket = socket;
         }
 
         public RequestModel ReadRequest()
         {
             String json = ReadString();
-            return JsonConvert.DeserializeObject<RequestModel>(json);
+            return JSON.Parse<RequestModel>(json);
         }
 
         public void SendResponse(ResponseModel response)
         {
             lock (socket)
             {
-                String json = JsonConvert.SerializeObject(response);
-                byte[] buffer = Encoding.ASCII.GetBytes(json);
-                byte[] sizeBuffer = BitConverter.GetBytes(buffer.Length);
-                socket.Send(sizeBuffer);
-                socket.Send(buffer);
+                try
+                {
+                    String json = JSON.Stringify(response);
+                    Log.Debug($"{client.Name}.SendResponse: {json}");
+                    byte[] buffer = Encoding.UTF8.GetBytes(json);
+                    byte[] sizeBuffer = BitConverter.GetBytes(buffer.Length);
+                    socket.Send(sizeBuffer);
+                    socket.Send(buffer);
+                } catch (SocketException)
+                {
+
+                }
             }
         }
 
         public int ReadInt()
         {
-            byte[] sizeBuffer = new byte[8];
-            socket.Receive(sizeBuffer);
-            return BitConverter.ToInt32(sizeBuffer, 0);
+            byte[] sizeBuffer = new byte[4];
+            int size = socket.Receive(sizeBuffer);
+            if (size == 0) {
+                client.Close();
+                throw new SocketClosedException();
+            }
+            int result = BitConverter.ToInt32(sizeBuffer, 0);
+            Log.Debug($"{client.Name}.ReadInt: {result}");
+            return result;
         }
 
         public String ReadString()
         {
-            int size = ReadInt();
-            byte[] buffer = new byte[size];
-            socket.Receive(buffer);
-            return BitConverter.ToString(buffer);
+            int bufferSize = ReadInt();
+            byte[] buffer = new byte[bufferSize];
+            int size = socket.Receive(buffer);
+            if (size == 0)
+            {
+                client.Close();
+                throw new SocketClosedException();
+            }
+            string result = Encoding.UTF8.GetString(buffer);
+            Log.Debug($"{client.Name}.ReadString: {result}");
+            return result;
         }
 
     }

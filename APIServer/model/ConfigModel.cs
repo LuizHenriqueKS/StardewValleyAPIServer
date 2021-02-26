@@ -10,5 +10,6 @@ namespace APIServer
     {
         public string Host = "127.0.0.1";
         public int Port = 3412;
+        public bool WriteDebugLog = false;
     }
 }

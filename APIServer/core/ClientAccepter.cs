@@ -32,11 +32,14 @@ namespace APIServer.core
 
         private void ListenSockets()
         {
-            Socket socket = server.SocketServer.AcceptSocket();
-            APIClient client = BuildClient(socket);
-            server.AddClient(client);
-            client.Processor = new ClientProcessor(client);
-            client.Processor.Start();
+            while (server.Listening)
+            {
+                Socket socket = server.SocketServer.AcceptSocket();
+                APIClient client = BuildClient(socket);
+                server.AddClient(client);
+                client.Processor = new ClientReader(client);
+                client.Processor.Start();
+            }
         }
 
         private APIClient BuildClient(Socket socket)

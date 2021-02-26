@@ -19,7 +19,7 @@ namespace APIServer.core
             this.Model = model;
         }
 
-        public void Reply(ResponseType type, dynamic result)
+        public void Reply(ResponseType type, object result)
         {
             ResponseModel response = new ResponseModel();
             response.Type = type;

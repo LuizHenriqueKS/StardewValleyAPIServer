@@ -4,13 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace APIServer.enums
+namespace APIServer.exception
 {
-    public enum ResponseType
+    public class SocketClosedException: Exception
     {
-        Response,
-        Error,
-        Accepted,
-        Event
     }
 }
