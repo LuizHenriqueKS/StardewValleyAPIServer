@@ -1,6 +1,5 @@
 ﻿using APIServer.core;
 using APIServer.handler.command;
-using APIServer.handler.events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +23,6 @@ namespace APIServer
         private readonly Dictionary<Object, List<Request>> requestListDict;
 
         public readonly CommandManager CommandManager;
-        public readonly EventManager EventManager;
 
         public APIServer()
         {
@@ -32,7 +30,6 @@ namespace APIServer
             clientAccepter = new ClientAccepter(this);
             requestListDict = new Dictionary<Object, List<Request>>();
             CommandManager = new CommandManager(this);
-            EventManager = new EventManager(this);
         }
 
         public void Listen(string host, int port)
@@ -50,16 +47,6 @@ namespace APIServer
         {
             this.CommandManager.AddHandler(new PingCommandHandler());
             this.CommandManager.AddHandler(new RunJSCommandHandler());
-
-            this.CommandManager.AddHandler(new ListenButtonPressedEventCommandHandler());
-
-            this.EventManager.AddHandler(new ButtonPressedEventHandler());
-        }
-
-        public void FireEvent(APIEvent evt)
-        {
-            EventHandlerHelper helper = new EventHandlerHelper(this, evt);
-            this.EventManager.Fire(helper);
         }
 
         public void HandleRequest(Request request)

@@ -43,15 +43,15 @@ namespace APIServer.core
                         Client.Server.HandleRequest(request);
                     }
                 }
-                catch (JsonSerializationException ex)
+                catch (JsonSerializationException)
                 {
                     Log.Error("Error read request");
                 }
-                catch (SocketClosedException ex)
+                catch (SocketClosedException)
                 {
                     Client.Close();
                 }
-                catch (SocketException ex)
+                catch (SocketException)
                 {
                     Client.Close();
                 }

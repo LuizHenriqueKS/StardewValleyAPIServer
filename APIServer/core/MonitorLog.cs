@@ -16,7 +16,7 @@ namespace APIServer.core
             try
             {
                 Monitor.Log(message, level);
-            } catch (FileNotFoundException ex)
+            } catch (FileNotFoundException)
             {}
         }
 

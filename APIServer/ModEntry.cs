@@ -31,18 +31,12 @@ namespace APIServer
 
                 this.Monitor.Log($"APIServer started in ${config.Host}:${config.Port}");
 
-                helper.Events.Input.ButtonPressed += this.OnButtonPressed;
+                //helper.Events.Input.ButtonPressed += this.OnButtonPressed;
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
             }
-        }
-
-        private void OnButtonPressed(object sender, ButtonPressedEventArgs args)
-        {
-            ButtonPressedEvent evt = new ButtonPressedEvent(sender, args);
-            server.FireEvent(evt);
         }
 
     }
