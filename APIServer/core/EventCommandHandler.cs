@@ -24,7 +24,7 @@ namespace APIServer.core
         public void Handle(CommandHandlerHelper helper)
         {
             helper.Server.AddRequest(typeof(T), helper.Request);
-            helper.Reply(enums.ResponseType.Accepted, new CommandAccepted(GetName()));
+            helper.Reply(enums.ResponseType.Accepted, new CommandAcceptedModel(GetName()));
         }
     }
 }

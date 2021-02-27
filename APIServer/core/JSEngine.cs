@@ -14,34 +14,29 @@ namespace APIServer.core
         public APIClient Client;
 
         private readonly V8ScriptEngine engine;
-        private readonly Dictionary<string, object> refMap;
-
-        private int lastRefId;
 
         public JSEngine(APIClient client)
         {
             this.Client = client;
             this.engine = new V8ScriptEngine();
-            this.refMap = new Dictionary<string, object>();
+            this.engine.AllowReflection = true;
 
-            AddType(typeof(Log));
             AddObject("client", client);
-            AddObject("engine", this);
             Prepare();
         }
 
-        public object Evaluate(string script)
+        public object Evaluate(Request request, string script)
         {
+            this.engine.AddHostObject("request", request);
             string scriptBuilded = BuildScript(script);
-            this.engine.Execute(scriptBuilded);
-            return this.engine.Evaluate("main()");
+            return this.engine.Evaluate(scriptBuilded);
         }
 
-        public void Execute(string script)
+        public void Execute(Request request, string script)
         {
+            this.engine.AddHostObject("request", request);
             string scriptBuilded = BuildScript(script);
             this.engine.Execute(scriptBuilded);
-            this.engine.Execute("main();");
         }
 
         public void AddType(Type type)
@@ -60,27 +55,19 @@ namespace APIServer.core
             }
         }
 
-        public string AddReference(object value)
-        {
-            string name = $"ref#{lastRefId++}";
-            this.refMap.Add(name, value);
-            return name;
-        }
-
-        public object GetReference(string name)
-        {
-            return this.refMap[name];
-        }
-
         private String BuildScript(string script)
         {
-            return "function main(){ " + script + " }";
+            return "(function (){ " + script + " })();";
         }
 
         private void Prepare()
         {
             try
             {
+                this.engine.Execute("const refs = {};");
+                AddType(typeof(Test));
+                AddType(typeof(Log));
+                AddObject("engine", this);
                 GameJS.Prepare(this);
             }
             catch (FileNotFoundException)

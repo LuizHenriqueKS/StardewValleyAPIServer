@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace APIServer.model
 {
-    public class CommandAccepted
+    public class CommandAcceptedModel
     {
 
         public string Name;
 
-        public CommandAccepted(string name)
+        public CommandAcceptedModel(string name)
         {
             this.Name = name;
         }

@@ -26,8 +26,9 @@ namespace APIServer.handler.command
             try
             {
                 string script = helper.Command.Args["script"].ToString();
-                object response = helper.Client.JSEngine.Evaluate(script);
-                helper.Reply(enums.ResponseType.Response, response);
+                object response = helper.Client.JSEngine.Evaluate(helper.Request, script);
+                object convertedResponse = ResponseConverterManager.Convert(response);
+                helper.Reply(enums.ResponseType.Response, convertedResponse);
             } catch (Exception e)
             {
                 helper.Reply(enums.ResponseType.Error, e);

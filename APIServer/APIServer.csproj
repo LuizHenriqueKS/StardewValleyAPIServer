@@ -69,13 +69,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="converter\response\HostTypeConverter.cs" />
     <Compile Include="core\APIClient.cs" />
+    <Compile Include="core\ClientEventInfoFactory.cs" />
     <Compile Include="core\ClientIO.cs" />
     <Compile Include="core\ClientReader.cs" />
     <Compile Include="core\Command.cs" />
     <Compile Include="core\DefaultEventHandler.cs" />
     <Compile Include="core\EventCommandHandler.cs" />
     <Compile Include="core\EventManager .cs" />
+    <Compile Include="core\EventBus.cs" />
     <Compile Include="core\IEventHandler.cs" />
     <Compile Include="core\ICommandHandler.cs" />
     <Compile Include="core\CommandHandlerHelper.cs" />
@@ -86,6 +89,8 @@
     <Compile Include="core\MonitorLog.cs" />
     <Compile Include="core\Log.cs" />
     <Compile Include="core\Request.cs" />
+    <Compile Include="core\IConverter.cs" />
+    <Compile Include="core\ResponseConverterManager.cs" />
     <Compile Include="enums\ResponseType.cs" />
     <Compile Include="events\APIEvent.cs" />
     <Compile Include="events\ButtonPressedEvent.cs" />
@@ -96,17 +101,22 @@
     <Compile Include="handler\command\RunJSCommandHandler.cs" />
     <Compile Include="handler\command\PingCommandHandler.cs" />
     <Compile Include="handler\events\ButtonPressedEventHandler.cs" />
-    <Compile Include="model\CommandAccepted.cs" />
+    <Compile Include="core\ClientEventInfo.cs" />
+    <Compile Include="model\CommandAcceptedModel.cs" />
+    <Compile Include="model\EventModel.cs" />
+    <Compile Include="model\HostTypeModel.cs" />
     <Compile Include="model\RequestModel.cs" />
     <Compile Include="model\ConfigModel.cs" />
     <Compile Include="model\ResponseModel.cs" />
     <Compile Include="ModEntry.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="util\ClearScriptUtils.cs" />
     <Compile Include="util\GameEvents.cs" />
     <Compile Include="util\GameJS.cs" />
     <Compile Include="util\HandlerUtils.cs" />
     <Compile Include="util\JSON.cs" />
     <Compile Include="util\JSONContractResolve.cs" />
+    <Compile Include="util\Test.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
