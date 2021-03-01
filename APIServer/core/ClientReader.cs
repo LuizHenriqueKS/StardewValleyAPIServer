@@ -45,7 +45,15 @@ namespace APIServer.core
                 }
                 catch (JsonSerializationException)
                 {
-                    Log.Error("Error read request");
+                    Log.Error("JsonSerializationException");
+                }
+                catch (JsonReaderException)
+                {
+                    Log.Error("JsonReaderException");
+                } 
+                catch (VeryLongStringException)
+                {
+                    Log.Error("VeryLongStringException");
                 }
                 catch (SocketClosedException)
                 {

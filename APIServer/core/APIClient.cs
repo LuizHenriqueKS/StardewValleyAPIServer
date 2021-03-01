@@ -37,12 +37,29 @@ namespace APIServer.core
             Log.Info($"New client: {Name}");
         }
 
-        public ClientEventInfo AddEvent(Request request, object target, string eventName) 
+        public ClientEventInfo AddEvent(Request request, object target, string eventName, bool writeLong) 
         { 
             ClientEventInfo info = ClientEventInfoFactory.Create(lastEventId++, request, target, eventName);
+            info.WriteLog = writeLong;
             eventList.Add(info);
             info.EventInfo.GetAddMethod().Invoke(info.Target, info.DelegateArgs);
             return info;
+        }
+
+        public bool RemoveEvent(int eventId)
+        {
+            bool result = false;
+            for (int i = eventList.Count() - 1; i >= 0; i--)
+            {
+                ClientEventInfo info = eventList[i];
+                if (info.Id == eventId)
+                {
+                    result = true;
+                    info.EventInfo.GetRemoveMethod().Invoke(info.Target, info.DelegateArgs);
+                    eventList.RemoveAt(i);
+                }
+            }
+            return result;
         }
 
         public void RemoteAllEventListeners()
@@ -58,7 +75,7 @@ namespace APIServer.core
 
         public Request NextRequest()
         {
-            RequestModel model = io.ReadRequest();
+            RequestModel model = io.ReadRequest(); 
             if (model == null)
             {
                 return null;

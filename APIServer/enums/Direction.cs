@@ -6,12 +6,11 @@ using System.Threading.Tasks;
 
 namespace APIServer.enums
 {
-    public enum ResponseType
+    public enum Direction
     {
-        Response,
-        Error,
-        Accepted,
-        Event,
-        Walking
+        UP = 0,
+        RIGHT = 1,
+        DOWN = 2,
+        LEFT = 3
     }
 }

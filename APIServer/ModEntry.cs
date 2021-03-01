@@ -1,4 +1,7 @@
 ﻿using APIServer.core;
+using APIServer.injections;
+using APIServer.util;
+using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -11,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace APIServer
 {
-    class ModEntry : Mod
+    public class ModEntry : Mod
     {
 
         private APIServer server;
@@ -25,18 +28,35 @@ namespace APIServer
                 MonitorLog.Monitor = this.Monitor;
                 Log.WriteDebugLog = config.WriteDebugLog;
 
+                GameJS.Mod = this;
+                Game1.input = new SInputStateExtended(Game1.input);
+
                 server = new APIServer();
                 server.LoadDefaultHandlers();
                 server.Listen(config.Host, config.Port);
 
                 this.Monitor.Log($"APIServer started in ${config.Host}:${config.Port}");
-
-                //helper.Events.Input.ButtonPressed += this.OnButtonPressed;
+                helper.Events.GameLoop.UpdateTicked += OnUpdateTicked;
+                helper.Events.Multiplayer.ModMessageReceived += OnModMessageReceivedEventArgs;
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
             }
+        }
+
+        private void OnUpdateTicked(object sender, UpdateTickedEventArgs args)
+        {
+            foreach (CharacterWalker walker in GameJS.WalkerMap().Values)
+            {
+                walker.Update();
+            }
+        }
+
+        private void OnModMessageReceivedEventArgs(object sender, ModMessageReceivedEventArgs args)
+        {
+            Console.WriteLine("Type message: " + args.Type);
+            Console.WriteLine("From player: " + args.FromPlayerID);
         }
 
     }

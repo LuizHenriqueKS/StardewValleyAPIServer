@@ -19,13 +19,13 @@ namespace APIServer.core
             this.Model = model;
         }
 
-        public void Reply(ResponseType type, object result)
+        public void Reply(ResponseType type, object result, bool writeLog = true)
         {
             ResponseModel response = new ResponseModel();
             response.Type = type;
             response.Result = result;
             response.Id = Model.Id;
-            Client.io.SendResponse(response);
+            Client.io.SendResponse(response, writeLog);
         }
 
     }

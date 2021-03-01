@@ -55,6 +55,13 @@ namespace APIServer.core
             }
         }
 
+        public object getArrayValue(Object source, Object key)
+        {
+            var property = source.GetType().GetProperty("Item");
+            var value = property.GetValue(source, new[] { key });
+            return value;
+        }
+
         private String BuildScript(string script)
         {
             return "(function (){ " + script + " })();";

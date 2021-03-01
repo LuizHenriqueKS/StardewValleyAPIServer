@@ -26,6 +26,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -34,6 +35,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ClearScript.Core, Version=7.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -51,8 +53,22 @@
     <Reference Include="Microsoft.Build" />
     <Reference Include="Microsoft.Build.Framework" />
     <Reference Include="Microsoft.Build.Utilities.v4.0" />
+    <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\..\Windows\Microsoft.NET\assembly\GAC_32\Microsoft.Xna.Framework\v4.0_4.0.0.0__842cf8be1de50553\Microsoft.Xna.Framework.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Stardew Valley">
+      <HintPath>D:\Arquivos de programas\Steam\steamapps\common\Stardew Valley\Stardew Valley.exe</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="StardewModdingAPI">
+      <HintPath>D:\Arquivos de programas\Steam\steamapps\common\Stardew Valley\StardewModdingAPI.exe</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -86,25 +102,32 @@
     <Compile Include="core\Request.cs" />
     <Compile Include="core\IConverter.cs" />
     <Compile Include="core\ResponseConverterManager.cs" />
+    <Compile Include="enums\Direction.cs" />
     <Compile Include="enums\ResponseType.cs" />
+    <Compile Include="events\WalkingEvent.cs" />
     <Compile Include="exception\AlreadyListeningException.cs" />
     <Compile Include="APIServer.cs" />
     <Compile Include="exception\SocketClosedException.cs" />
+    <Compile Include="exception\VeryLongStringException.cs" />
     <Compile Include="handler\command\RunJSCommandHandler.cs" />
     <Compile Include="handler\command\PingCommandHandler.cs" />
     <Compile Include="core\ClientEventInfo.cs" />
+    <Compile Include="injections\SInputStateExtended.cs" />
     <Compile Include="model\CommandAcceptedModel.cs" />
     <Compile Include="model\EventModel.cs" />
     <Compile Include="model\HostTypeModel.cs" />
     <Compile Include="model\RequestModel.cs" />
     <Compile Include="model\ConfigModel.cs" />
     <Compile Include="model\ResponseModel.cs" />
+    <Compile Include="model\TileLocation.cs" />
     <Compile Include="ModEntry.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="util\CharacterWalker.cs" />
     <Compile Include="util\ClearScriptUtils.cs" />
     <Compile Include="util\GameEvents.cs" />
     <Compile Include="util\GameJS.cs" />
     <Compile Include="util\HandlerUtils.cs" />
+    <Compile Include="util\Inj.cs" />
     <Compile Include="util\JSON.cs" />
     <Compile Include="util\JSONContractResolve.cs" />
     <Compile Include="util\Test.cs" />
@@ -114,12 +137,10 @@
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\packages\Pathoschild.Stardew.ModBuildConfig.3.2.2\build\Pathoschild.Stardew.ModBuildConfig.targets" Condition="Exists('..\packages\Pathoschild.Stardew.ModBuildConfig.3.2.2\build\Pathoschild.Stardew.ModBuildConfig.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>Este projeto faz referência a pacotes do NuGet que não estão presentes neste computador. Use a Restauração de Pacotes do NuGet para baixá-los.  Para obter mais informações, consulte http://go.microsoft.com/fwlink/?LinkID=322105. O arquivo ausente é {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Pathoschild.Stardew.ModBuildConfig.3.2.2\build\Pathoschild.Stardew.ModBuildConfig.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Pathoschild.Stardew.ModBuildConfig.3.2.2\build\Pathoschild.Stardew.ModBuildConfig.targets'))" />
     <Error Condition="!Exists('..\packages\Microsoft.ClearScript.V8.ICUData.7.1.0\build\Microsoft.ClearScript.V8.ICUData.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.ClearScript.V8.ICUData.7.1.0\build\Microsoft.ClearScript.V8.ICUData.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.ClearScript.V8.Native.win-x64.7.1.0\build\Microsoft.ClearScript.V8.Native.win-x64.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.ClearScript.V8.Native.win-x64.7.1.0\build\Microsoft.ClearScript.V8.Native.win-x64.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.ClearScript.V8.Native.win-x86.7.1.0\build\Microsoft.ClearScript.V8.Native.win-x86.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.ClearScript.V8.Native.win-x86.7.1.0\build\Microsoft.ClearScript.V8.Native.win-x86.props'))" />

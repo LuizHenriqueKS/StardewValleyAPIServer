@@ -25,17 +25,28 @@ namespace APIServer.core
         public RequestModel ReadRequest()
         {
             String json = ReadString();
-            return JSON.Parse<RequestModel>(json);
+            try
+            {
+                return JSON.Parse<RequestModel>(json);
+            }
+            catch (Newtonsoft.Json.JsonReaderException)
+            {
+                Log.Error($"JSON inválido: {json}");
+                return ReadRequest();
+            }
         }
 
-        public void SendResponse(ResponseModel response)
+        public void SendResponse(ResponseModel response, bool writeLog = true)
         {
             lock (socket)
             {
                 try
                 {
                     String json = JSON.Stringify(response);
-                    Log.Debug($"{client.Name}.SendResponse: {json}");
+                    if (writeLog)
+                    {
+                        Log.Debug($"{client.Name}.SendResponse: {json}");
+                    }
                     byte[] buffer = Encoding.UTF8.GetBytes(json);
                     byte[] sizeBuffer = BitConverter.GetBytes(buffer.Length);
                     socket.Send(sizeBuffer);
@@ -63,6 +74,7 @@ namespace APIServer.core
         public String ReadString()
         {
             int bufferSize = ReadInt();
+            if (bufferSize > 1024 * 1024) throw new VeryLongStringException(bufferSize);
             byte[] buffer = new byte[bufferSize];
             int size = socket.Receive(buffer);
             if (size == 0)

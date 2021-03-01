@@ -17,7 +17,8 @@ namespace APIServer.util
             return JsonConvert.SerializeObject(obj, serializerSettings);
         }
 
-        public static T Parse<T>(string json){
+        public static T Parse<T>(string json) 
+        {
             return JsonConvert.DeserializeObject<T>(json);
         }
     }

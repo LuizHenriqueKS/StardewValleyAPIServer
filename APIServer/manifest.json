@@ -1,0 +1,17 @@
+﻿{
+  "Name": "APIServer",
+  "Author": "Zul",
+  "Version": {
+    "MajorVersion": 1,
+    "MinorVersion": 1,
+    "PatchVersion": 0,
+    "Build": null
+  },
+  "MinimumApiVersion": "1.0",
+  "Description": "Create an API server.",
+  "UniqueID": "APIServer",
+  "EntryDll": "APIServer.dll",
+  "UpdateKeys": [
+    "Nexus:3412"
+  ]
+}

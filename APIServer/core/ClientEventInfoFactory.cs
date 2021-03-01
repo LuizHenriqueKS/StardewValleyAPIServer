@@ -22,17 +22,18 @@ namespace APIServer.core
             info.EventInfo = info.Type.GetEvent(eventName);
             Type eventArgsType = info.EventInfo.EventHandlerType.GenericTypeArguments[0];
             info.Target = ClearScriptUtils.IsHostType(target) ? null : target;
-            info.bus = Activator.CreateInstance(typeof(EventBus<>).MakeGenericType(eventArgsType), new object[] { info });
+            info.Bus = Activator.CreateInstance(typeof(EventBus<>).MakeGenericType(eventArgsType), new object[] { info });
             info.Delegate = CreateDelegate(info);
             info.DelegateArgs = new object[1]{ info.Delegate };
+            info.WriteLog = true;
             return info;
         }
 
         public static Delegate CreateDelegate(ClientEventInfo info)
         {
-            MethodInfo metInf = info.bus.GetType().GetMethod("FireEvent");
+            MethodInfo metInf = info.Bus.GetType().GetMethod("FireEvent");
             Type tDelegate = info.EventInfo.EventHandlerType;
-            return Delegate.CreateDelegate(tDelegate, info.bus, metInf);
+            return Delegate.CreateDelegate(tDelegate, info.Bus, metInf);
         }
 
     }

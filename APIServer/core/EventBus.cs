@@ -18,7 +18,10 @@ namespace APIServer.core
 
         public void FireEvent(Object sender, T eventArgs)
         {
-            EventInfo.Request.Reply(enums.ResponseType.Event, new EventModel(sender, eventArgs));
+            if (this.EventInfo.Request.Client.Connected )
+            {
+                EventInfo.Request.Reply(enums.ResponseType.Event, new EventModel(sender, eventArgs), this.EventInfo.WriteLog);
+            }
         }
     }
 }

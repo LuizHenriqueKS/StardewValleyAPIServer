@@ -20,6 +20,8 @@ namespace APIServer.model
 
         public object[] DelegateArgs;
 
-        public object bus;
+        public object Bus;
+
+        public bool WriteLog;
     }
 }
